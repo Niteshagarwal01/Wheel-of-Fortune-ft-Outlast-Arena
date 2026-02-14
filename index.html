@@ -39,11 +39,14 @@
                 <div class="nav-logo-text">OUTLAST<span class="nav-logo-accent">ARENA</span><span
                         class="nav-logo-ver">2.0</span></div>
             </div>
-            <ul class="nav-links">
+            <ul class="nav-links" id="navLinks">
                 <li><a href="#wheel-section"><i class="fa-solid fa-dharmachakra"></i> Spin</a></li>
                 <li><a href="#about"><i class="fa-solid fa-info-circle"></i> About</a></li>
                 <li><a href="#details"><i class="fa-solid fa-clipboard-list"></i> Details</a></li>
             </ul>
+            <div class="nav-toggle" id="navToggle">
+                <i class="fa-solid fa-bars"></i>
+            </div>
         </nav>
 
         <!-- ========== WHEEL SECTION (FIRST — hero replacement) ========== -->
@@ -346,6 +349,9 @@
         </div>
     </div>
 
+    <!-- Supabase SDK & Config -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
     <script src="script.js"></script>
 </body>
 

@@ -277,10 +277,29 @@
     }
 
     // ── Navbar ──────────────────────────────────────────
+    // ── Navbar ──────────────────────────────────────────
     function setupNavbar() {
         const nav = $('#navbar');
+        const navToggle = $('#navToggle');
+        const navLinks = $('#navLinks');
+        const navIcon = navToggle.querySelector('i');
+
         window.addEventListener('scroll', () => {
             nav.classList.toggle('scrolled', window.scrollY > 60);
+        });
+
+        navToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            const isActive = navLinks.classList.contains('active');
+            navIcon.className = isActive ? 'fa-solid fa-xmark' : 'fa-solid fa-bars';
+        });
+
+        // Close menu when clicking a link
+        navLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+                navIcon.className = 'fa-solid fa-bars';
+            });
         });
     }
 
@@ -445,10 +464,27 @@
             passInfo = generatePassInfo(wonPrize);
             localStorage.setItem('oa2_pass', JSON.stringify(passInfo));
 
-            // Save to admin entries array
-            const allEntries = JSON.parse(localStorage.getItem('oa2_entries') || '[]');
-            allEntries.push(passInfo);
-            localStorage.setItem('oa2_entries', JSON.stringify(allEntries));
+            // Save to Supabase
+            if (sbClient) {
+                sbClient.from('entries').insert([{
+                    name: passInfo.name,
+                    phone: passInfo.phone,
+                    reward: passInfo.reward,
+                    fee: passInfo.fee,
+                    type: passInfo.type,
+                    reward_id: passInfo.id,
+                    code: passInfo.code,
+                    timestamp: new Date().toISOString()
+                }]).then(({ error }) => {
+                    if (error) console.error('Supabase Error:', error);
+                });
+            } else {
+                console.warn('Supabase client not initialized. Check config.js');
+                // Fallback to local storage for demo/offline
+                const allEntries = JSON.parse(localStorage.getItem('oa2_entries') || '[]');
+                allEntries.push(passInfo);
+                localStorage.setItem('oa2_entries', JSON.stringify(allEntries));
+            }
 
             spinBtn.innerHTML = '<i class="fa-solid fa-circle-check"></i> SPIN USED';
             spinNote.innerHTML = wonPrize.type === 'win'

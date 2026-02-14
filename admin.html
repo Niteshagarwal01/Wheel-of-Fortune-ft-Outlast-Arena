@@ -548,6 +548,10 @@
         <p>Wheel of Fortune ft Outlast Arena 2.0 · Utkarsh 2026</p>
     </div>
 
+    <!-- Supabase SDK & Config -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
+
     <script>
         // ── Admin Password Gate ──
         (() => {
@@ -599,21 +603,49 @@
 
             let currentFilter = 'all';
 
-            function getAllEntries() {
+            function safeParse(key, fallback) {
+                try {
+                    const item = localStorage.getItem(key);
+                    return item ? JSON.parse(item) : fallback;
+                } catch (e) {
+                    console.error('Error parsing storage key:', key, e);
+                    return fallback;
+                }
+            }
+
+            async function getAllEntries() {
+                // If Supabase is active, fetch from there
+                if (sbClient) {
+                    const { data, error } = await sbClient
+                        .from('entries')
+                        .select('*')
+                        .order('timestamp', { ascending: false });
+
+                    if (error) {
+                        console.error('Error fetching from Supabase:', error);
+                        return [];
+                    }
+                    console.log('Loaded entries from Supabase:', data);
+                    return data;
+                }
+
+                // Fallback: LocalStorage
                 const entries = [];
-                const player = JSON.parse(localStorage.getItem('oa2_player') || 'null');
-                const pass = JSON.parse(localStorage.getItem('oa2_pass') || 'null');
+                const player = safeParse('oa2_player', null);
+                const pass = safeParse('oa2_pass', null);
+
                 if (player && pass) {
                     entries.push({ ...player, ...pass });
                 }
 
-                const bulk = JSON.parse(localStorage.getItem(KEY_PREFIX) || '[]');
-                bulk.forEach(entry => {
-                    if (!entries.find(e => e.id === entry.id)) {
-                        entries.push(entry);
-                    }
-                });
-
+                const bulk = safeParse(KEY_PREFIX, []);
+                if (Array.isArray(bulk)) {
+                    bulk.forEach(entry => {
+                        if (!entries.find(e => e.id === entry.id)) {
+                            entries.push(entry);
+                        }
+                    });
+                }
                 return entries;
             }
 
@@ -668,8 +700,8 @@
                 });
             }
 
-            function refresh() {
-                const entries = getAllEntries();
+            async function refresh() {
+                const entries = await getAllEntries();
                 updateStats(entries);
                 renderEntries(entries);
             }
