@@ -64,16 +64,14 @@
 
     // ── Curtain ─────────────────────────────────────────
     function setupCurtain() {
-        const alreadyOpen = sessionStorage.getItem('oa2_curtainOpen') === 'true';
-        if (alreadyOpen) {
-            curtainOverlay.style.display = 'none';
-            mainWrapper.style.opacity = '1';
-            return;
-        }
+        // Always show curtain on page load
+        mainWrapper.style.opacity = '0';
+        mainWrapper.style.transition = 'opacity .8s ease';
         curtainOverlay.addEventListener('click', () => {
             curtainOverlay.classList.add('open');
-            sessionStorage.setItem('oa2_curtainOpen', 'true');
-            mainWrapper.style.opacity = '1';
+            setTimeout(() => {
+                mainWrapper.style.opacity = '1';
+            }, 400);
             setTimeout(() => { curtainOverlay.style.display = 'none'; }, 1600);
         });
     }

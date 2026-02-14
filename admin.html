@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-        href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Open+Sans:wght@300;400;500;600;700;800&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
         rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <style>
@@ -21,21 +21,45 @@
         }
 
         :root {
-            --navy: #0c0a2a;
-            --navy2: #150f3d;
-            --coral: #e8571e;
-            --orange: #f4811e;
-            --amber: #f7a21d;
-            --white: #fff;
-            --dimwhite: rgba(255, 255, 255, .55);
+            --bg: #09080f;
+            --bg2: #0f0e18;
+            --surface: #151421;
+            --accent: #f7a21d;
+            --accent2: #e8571e;
+            --green: #34d399;
+            --white: #ffffff;
+            --text: rgba(255, 255, 255, .88);
+            --text-muted: rgba(255, 255, 255, .5);
+            --text-dim: rgba(255, 255, 255, .3);
+            --f-display: 'Outfit', sans-serif;
+            --f-ui: 'Space Grotesk', sans-serif;
+            --f-body: 'Inter', sans-serif;
+            --r: 14px;
         }
 
         body {
-            font-family: 'Open Sans', sans-serif;
-            background: linear-gradient(135deg, #0c0a2a, #150f3d, #1e1250);
-            color: var(--white);
+            font-family: var(--f-body);
+            background: var(--bg);
+            color: var(--text);
             min-height: 100vh;
-            line-height: 1.6;
+            line-height: 1.65;
+        }
+
+        /* Grain */
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            opacity: .025;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            background-size: 180px;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
         }
 
         /* ── Top Bar ── */
@@ -43,10 +67,10 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 16px 32px;
-            background: rgba(0, 0, 0, .3);
+            padding: 18px 36px;
+            background: rgba(9, 8, 15, .8);
             backdrop-filter: blur(16px);
-            border-bottom: 1px solid rgba(255, 255, 255, .06);
+            border-bottom: 1px solid rgba(255, 255, 255, .04);
             position: sticky;
             top: 0;
             z-index: 100;
@@ -55,99 +79,105 @@
         .admin-brand {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 14px;
         }
 
         .admin-brand i {
-            font-size: 1.4rem;
-            color: var(--orange);
+            font-size: 1.3rem;
+            color: var(--accent);
         }
 
         .admin-brand h1 {
-            font-family: 'Anton', sans-serif;
-            font-size: 1.4rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
+            font-family: var(--f-display);
+            font-size: 1.2rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            color: var(--white);
         }
 
         .admin-brand span {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: .85rem;
+            font-family: var(--f-ui);
+            font-size: .75rem;
+            font-weight: 500;
             letter-spacing: 2px;
-            color: var(--dimwhite);
-            margin-left: 8px;
+            color: var(--text-dim);
+            text-transform: uppercase;
         }
 
         .admin-back {
             display: flex;
             align-items: center;
             gap: 8px;
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 1rem;
-            letter-spacing: 1.5px;
-            color: var(--dimwhite);
-            text-decoration: none;
+            font-family: var(--f-ui);
+            font-size: .8rem;
+            font-weight: 500;
+            letter-spacing: 1px;
+            color: var(--text-muted);
             padding: 8px 20px;
             border-radius: 50px;
-            border: 1px solid rgba(255, 255, 255, .1);
+            border: 1px solid rgba(255, 255, 255, .08);
             transition: all .3s;
         }
 
         .admin-back:hover {
-            color: var(--orange);
-            border-color: var(--orange);
+            color: var(--accent);
+            border-color: var(--accent);
         }
 
-        /* ── Main Container ── */
+        /* ── Container ── */
         .admin-container {
-            max-width: 1200px;
+            max-width: 1100px;
             margin: 0 auto;
-            padding: 32px 24px;
+            padding: 48px 32px;
+            position: relative;
+            z-index: 1;
         }
 
         /* ── Stats Row ── */
         .stats-row {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-            margin-bottom: 32px;
+            gap: 18px;
+            margin-bottom: 44px;
         }
 
         .stat-card {
-            background: rgba(255, 255, 255, .05);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, .08);
-            border-radius: 16px;
-            padding: 24px 20px;
+            background: rgba(255, 255, 255, .03);
+            border: 1px solid rgba(255, 255, 255, .05);
+            border-radius: var(--r);
+            padding: 28px 24px;
             text-align: center;
-            transition: all .3s;
+            transition: all .35s;
         }
 
         .stat-card:hover {
-            transform: translateY(-4px);
-            background: rgba(255, 255, 255, .08);
-            border-color: rgba(232, 87, 30, .2);
+            transform: translateY(-3px);
+            background: rgba(255, 255, 255, .06);
+            border-color: rgba(247, 162, 29, .12);
         }
 
         .stat-icon {
-            font-size: 1.8rem;
-            color: var(--orange);
-            margin-bottom: 8px;
+            font-size: 1.5rem;
+            color: var(--accent);
+            margin-bottom: 10px;
         }
 
         .stat-value {
-            font-family: 'Anton', sans-serif;
-            font-size: 2.2rem;
+            font-family: var(--f-display);
+            font-size: 2rem;
+            font-weight: 800;
             color: var(--white);
             line-height: 1.2;
         }
 
         .stat-label {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: .85rem;
-            letter-spacing: 2px;
-            color: var(--dimwhite);
-            margin-top: 4px;
+            font-family: var(--f-ui);
+            font-size: .72rem;
+            font-weight: 600;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            margin-top: 6px;
         }
 
         /* ── Controls ── */
@@ -156,7 +186,7 @@
             align-items: center;
             justify-content: space-between;
             gap: 16px;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
             flex-wrap: wrap;
         }
 
@@ -164,16 +194,23 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            background: rgba(255, 255, 255, .06);
-            border: 1px solid rgba(255, 255, 255, .1);
+            background: rgba(255, 255, 255, .04);
+            border: 1px solid rgba(255, 255, 255, .06);
             border-radius: 50px;
             padding: 10px 20px;
             flex: 1;
-            max-width: 420px;
+            max-width: 400px;
+            transition: border-color .3s;
+        }
+
+        .search-box:focus-within {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(247, 162, 29, .08);
         }
 
         .search-box i {
-            color: var(--dimwhite);
+            color: var(--text-dim);
+            font-size: .85rem;
         }
 
         .search-box input {
@@ -181,13 +218,13 @@
             border: none;
             outline: none;
             color: var(--white);
-            font-family: 'Open Sans', sans-serif;
-            font-size: .95rem;
+            font-family: var(--f-body);
+            font-size: .88rem;
             width: 100%;
         }
 
         .search-box input::placeholder {
-            color: rgba(255, 255, 255, .3);
+            color: var(--text-dim);
         }
 
         .filter-btns {
@@ -196,21 +233,23 @@
         }
 
         .filter-btn {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: .88rem;
+            font-family: var(--f-ui);
+            font-size: .76rem;
+            font-weight: 600;
             letter-spacing: 1.5px;
-            padding: 8px 20px;
+            padding: 8px 18px;
             border-radius: 50px;
-            border: 1px solid rgba(255, 255, 255, .12);
-            background: rgba(255, 255, 255, .05);
-            color: var(--dimwhite);
+            border: 1px solid rgba(255, 255, 255, .08);
+            background: rgba(255, 255, 255, .03);
+            color: var(--text-dim);
             cursor: pointer;
             transition: all .3s;
+            text-transform: uppercase;
         }
 
         .filter-btn:hover,
         .filter-btn.active {
-            background: linear-gradient(135deg, var(--coral), var(--orange));
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
             border-color: transparent;
             color: #fff;
         }
@@ -219,10 +258,11 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: .95rem;
-            letter-spacing: 1.5px;
-            padding: 10px 24px;
+            font-family: var(--f-ui);
+            font-size: .78rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            padding: 10px 22px;
             border-radius: 50px;
             border: none;
             cursor: pointer;
@@ -230,31 +270,30 @@
         }
 
         .btn-export {
-            background: linear-gradient(135deg, var(--coral), var(--orange));
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
             color: #fff;
         }
 
         .btn-export:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(232, 87, 30, .3);
+            box-shadow: 0 6px 20px rgba(247, 162, 29, .2);
         }
 
         .btn-clear {
-            background: rgba(220, 50, 50, .15);
+            background: rgba(220, 50, 50, .1);
             color: #f76c6c;
-            border: 1px solid rgba(220, 50, 50, .2);
+            border: 1px solid rgba(220, 50, 50, .15);
         }
 
         .btn-clear:hover {
-            background: rgba(220, 50, 50, .3);
+            background: rgba(220, 50, 50, .2);
         }
 
         /* ── Table ── */
         .table-container {
-            background: rgba(255, 255, 255, .04);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, .06);
-            border-radius: 16px;
+            background: rgba(255, 255, 255, .02);
+            border: 1px solid rgba(255, 255, 255, .05);
+            border-radius: var(--r);
             overflow: hidden;
         }
 
@@ -264,31 +303,32 @@
         }
 
         thead th {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: .88rem;
-            letter-spacing: 2px;
-            color: var(--amber);
+            font-family: var(--f-ui);
+            font-size: .72rem;
+            font-weight: 600;
+            letter-spacing: 2.5px;
+            color: var(--accent);
             text-align: left;
             padding: 16px 18px;
-            background: rgba(0, 0, 0, .25);
-            border-bottom: 1px solid rgba(255, 255, 255, .06);
+            background: rgba(0, 0, 0, .2);
+            border-bottom: 1px solid rgba(255, 255, 255, .04);
             text-transform: uppercase;
             white-space: nowrap;
         }
 
         tbody tr {
-            border-bottom: 1px solid rgba(255, 255, 255, .04);
+            border-bottom: 1px solid rgba(255, 255, 255, .03);
             transition: background .2s;
         }
 
         tbody tr:hover {
-            background: rgba(255, 255, 255, .04);
+            background: rgba(255, 255, 255, .03);
         }
 
         tbody td {
             padding: 14px 18px;
-            font-size: .9rem;
-            color: rgba(255, 255, 255, .8);
+            font-size: .85rem;
+            color: var(--text-muted);
             white-space: nowrap;
         }
 
@@ -296,46 +336,64 @@
             display: inline-block;
             padding: 4px 14px;
             border-radius: 50px;
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: .78rem;
+            font-family: var(--f-ui);
+            font-size: .68rem;
+            font-weight: 600;
             letter-spacing: 1.5px;
         }
 
         .badge-win {
-            background: rgba(39, 174, 96, .18);
-            color: #6ddf9a;
-            border: 1px solid rgba(39, 174, 96, .25);
+            background: rgba(52, 211, 153, .1);
+            color: var(--green);
+            border: 1px solid rgba(52, 211, 153, .18);
         }
 
         .badge-lose {
-            background: rgba(220, 50, 50, .12);
+            background: rgba(220, 50, 50, .08);
             color: #e87c7c;
-            border: 1px solid rgba(220, 50, 50, .2);
+            border: 1px solid rgba(220, 50, 50, .15);
         }
 
         .empty-state {
             text-align: center;
             padding: 80px 20px;
-            color: var(--dimwhite);
+            color: var(--text-dim);
         }
 
         .empty-state i {
-            font-size: 3.5rem;
-            color: rgba(255, 255, 255, .15);
+            font-size: 3rem;
+            color: rgba(255, 255, 255, .1);
             margin-bottom: 16px;
             display: block;
         }
 
         .empty-state h3 {
-            font-family: 'Anton', sans-serif;
-            font-size: 1.3rem;
-            letter-spacing: 2px;
+            font-family: var(--f-display);
+            font-size: 1.2rem;
+            font-weight: 700;
             margin-bottom: 8px;
-            color: rgba(255, 255, 255, .4);
+            color: var(--text-dim);
         }
 
         .empty-state p {
-            font-size: .9rem;
+            font-size: .85rem;
+        }
+
+        /* ── Footer ── */
+        .admin-footer {
+            text-align: center;
+            padding: 32px;
+            border-top: 1px solid rgba(255, 255, 255, .03);
+            margin-top: 48px;
+        }
+
+        .admin-footer p {
+            font-family: var(--f-ui);
+            font-size: .72rem;
+            font-weight: 500;
+            letter-spacing: 2px;
+            color: var(--text-dim);
+            text-transform: uppercase;
         }
 
         /* ── Responsive ── */
@@ -344,6 +402,10 @@
                 flex-direction: column;
                 gap: 12px;
                 padding: 16px;
+            }
+
+            .admin-container {
+                padding: 28px 16px;
             }
 
             .controls-row {
@@ -457,6 +519,11 @@
         </div>
     </div>
 
+    <!-- Footer -->
+    <div class="admin-footer">
+        <p>Wheel of Fortune ft Outlast Arena 2.0 · Utkarsh 2026</p>
+    </div>
+
     <script>
         (() => {
             'use strict';
@@ -471,20 +538,16 @@
 
             let currentFilter = 'all';
 
-            // Load all entries from localStorage
             function getAllEntries() {
                 const entries = [];
-                // Check the single-player entry
                 const player = JSON.parse(localStorage.getItem('oa2_player') || 'null');
                 const pass = JSON.parse(localStorage.getItem('oa2_pass') || 'null');
                 if (player && pass) {
                     entries.push({ ...player, ...pass });
                 }
 
-                // Check bulk entries array (for admin tracking)
                 const bulk = JSON.parse(localStorage.getItem(KEY_PREFIX) || '[]');
                 bulk.forEach(entry => {
-                    // Avoid duplicates
                     if (!entries.find(e => e.id === entry.id)) {
                         entries.push(entry);
                     }
@@ -505,7 +568,6 @@
             }
 
             function renderEntries(entries) {
-                // Apply search filter
                 const search = searchInput.value.toLowerCase().trim();
                 let filtered = entries;
 
@@ -516,7 +578,6 @@
                     );
                 }
 
-                // Apply type filter
                 if (currentFilter !== 'all') {
                     filtered = filtered.filter(e => e.type === currentFilter);
                 }
@@ -534,13 +595,13 @@
                     const isWin = entry.type === 'win';
                     tr.innerHTML = `
                         <td>${i + 1}</td>
-                        <td><strong>${entry.name || '—'}</strong></td>
+                        <td><strong style="color:var(--white)">${entry.name || '—'}</strong></td>
                         <td>${entry.phone || '—'}</td>
                         <td>${entry.reward || '—'}</td>
                         <td>₹${entry.fee || 100}</td>
                         <td><span class="badge ${isWin ? 'badge-win' : 'badge-lose'}">${isWin ? 'WIN' : 'NO WIN'}</span></td>
-                        <td style="font-size:.78rem;opacity:.6">${entry.id || '—'}</td>
-                        <td style="font-size:.78rem;opacity:.6">${entry.time || '—'}</td>
+                        <td style="font-size:.75rem;opacity:.5">${entry.id || '—'}</td>
+                        <td style="font-size:.75rem;opacity:.5">${entry.time || '—'}</td>
                     `;
                     tbody.appendChild(tr);
                 });
@@ -552,10 +613,8 @@
                 renderEntries(entries);
             }
 
-            // Search
             searchInput.addEventListener('input', refresh);
 
-            // Filter buttons
             filterBtns.forEach(btn => {
                 btn.addEventListener('click', () => {
                     filterBtns.forEach(b => b.classList.remove('active'));
@@ -565,7 +624,6 @@
                 });
             });
 
-            // Export CSV
             exportBtn.addEventListener('click', () => {
                 const entries = getAllEntries();
                 if (entries.length === 0) return alert('No entries to export.');
@@ -588,7 +646,6 @@
                 a.click();
             });
 
-            // Clear all entries
             clearBtn.addEventListener('click', () => {
                 if (!confirm('Are you sure? This will clear ALL saved entries from this browser.')) return;
                 localStorage.removeItem('oa2_player');
@@ -598,7 +655,6 @@
                 refresh();
             });
 
-            // Initial render
             refresh();
         })();
     </script>
