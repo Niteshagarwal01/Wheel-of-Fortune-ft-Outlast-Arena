@@ -1609,6 +1609,22 @@ a {
   color: var(--text-muted);
 }
 
+.footer-tcc-link {
+  text-decoration: none;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  display: block;
+}
+
+.footer-tcc-link:hover {
+  transform: translateY(-5px) scale(1.02);
+}
+
+.footer-tcc-link:hover .footer-tcc {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(247, 162, 29, 0.3);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
 .footer-tcc {
   display: flex;
   align-items: center;
@@ -1618,6 +1634,7 @@ a {
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.05);
   width: fit-content;
+  transition: all 0.3s ease;
 }
 
 .tcc-logo-footer {
