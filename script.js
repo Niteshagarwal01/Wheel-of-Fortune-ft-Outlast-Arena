@@ -337,15 +337,25 @@
 
             // Check duplicates in Supabase
             if (sbClient) {
-                const { count, error } = await sbClient
+                // First try checking both Phone AND IP (Requires updated schema)
+                let { count, error } = await sbClient
                     .from('entries')
                     .select('*', { count: 'exact', head: true })
                     .or(`phone.eq.${phone},ip_address.eq.${userIP}`);
 
+                // If error (e.g., missing ip_address column), try checking JUST phone
                 if (error) {
-                    console.error('Check Error:', error);
-                    // Fallback: Allow if error (don't block legitimate users if DB is down)
-                } else if (count > 0) {
+                    console.warn('Complex check failed (likely schema mismatch), retrying phone only:', error);
+                    const phoneCheck = await sbClient
+                        .from('entries')
+                        .select('*', { count: 'exact', head: true })
+                        .eq('phone', phone);
+
+                    count = phoneCheck.count;
+                    error = phoneCheck.error;
+                }
+
+                if (count > 0) {
                     alert('You have already used your free spin from this device or phone number!');
                     idxButton.disabled = false;
                     idxButton.innerHTML = originalText;
