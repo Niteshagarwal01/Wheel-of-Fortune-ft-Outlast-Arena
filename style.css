@@ -1262,6 +1262,12 @@ a {
   box-shadow: 0 20px 60px rgba(0, 0, 0, .5);
 }
 
+.result-modal-content .btn {
+  width: 100%;
+  margin-top: 12px;
+  justify-content: center;
+}
+
 .confetti-container {
   position: absolute;
   inset: 0;
