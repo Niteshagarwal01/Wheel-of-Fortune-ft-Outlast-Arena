@@ -176,6 +176,7 @@
         observeReveal();
         setupNavbar();
         restoreState();
+        setupSecurity();
     }
 
     // ── Curtain ─────────────────────────────────────────
@@ -746,54 +747,103 @@
         g.fillStyle = '#fff'; g.font = '800 28px "Outfit", sans-serif';
         g.fillText('ARENA REWARD PASS', 400, 85);
         g.fillStyle = 'rgba(255,255,255,.4)'; g.font = '400 13px "Outfit", sans-serif';
-        g.fillText('Wheel of Fortune ft Outlast Arena 2.0', 400, 108);
+        g.fillText('Wheel of Fortune Outlast Arena 2.0', 400, 108);
 
         // Divider
         const divGrad = g.createLinearGradient(200, 0, 600, 0);
-        divGrad.addColorStop(0, 'transparent');
-        divGrad.addColorStop(0.5, 'rgba(247,162,29,.4)');
-        divGrad.addColorStop(1, 'transparent');
-        g.fillStyle = divGrad; g.fillRect(200, 125, 400, 1);
+        divGrad.addColorStop(0, 'rgba(255,255,255,0)');
+        divGrad.addColorStop(0.5, 'rgba(255,255,255,0.3)');
+        divGrad.addColorStop(1, 'rgba(255,255,255,0)');
+        g.fillStyle = divGrad; g.fillRect(150, 130, 500, 1);
 
         // Details
         g.textAlign = 'left';
-        const rows = [
-            { label: 'Player', value: passInfo.name },
-            { label: 'Phone', value: passInfo.phone },
-            { label: 'Reward', value: passInfo.reward, color: passInfo.type === 'win' ? '#34d399' : 'rgba(255,255,255,.5)' },
-            { label: 'Entry Fee', value: '₹' + passInfo.fee, color: '#f7a21d' },
-        ];
-        let y = 170;
-        rows.forEach(row => {
-            g.fillStyle = 'rgba(255,255,255,.45)'; g.font = '500 13px "Outfit", sans-serif';
-            g.fillText(row.label, 120, y);
-            g.fillStyle = row.color || '#fff'; g.font = '700 16px "Outfit", sans-serif';
-            g.fillText(row.value, 120, y + 22);
-            y += 60;
-        });
+        g.font = '600 16px "Inter", sans-serif'; g.fillStyle = '#aaa';
+        g.fillText('PLAYER', 150, 180);
+        g.font = '500 24px "Outfit", sans-serif'; g.fillStyle = '#fff';
+        g.fillText(passInfo.name, 150, 215);
 
-        // Right side codes
-        g.textAlign = 'right';
-        g.fillStyle = 'rgba(255,255,255,.3)'; g.font = '500 12px "Outfit", sans-serif';
-        g.fillText('ID: ' + passInfo.id, 680, 180);
-        g.fillText('Verification: ' + passInfo.code, 680, 200);
-        g.fillText(passInfo.time, 680, 220);
+        g.font = '600 16px "Inter", sans-serif'; g.fillStyle = '#aaa';
+        g.fillText('PHONE', 450, 180);
+        g.font = '500 24px "Outfit", sans-serif'; g.fillStyle = '#fff';
+        g.fillText(passInfo.phone, 450, 215);
 
-        // Bottom divider
-        g.fillStyle = divGrad; g.fillRect(200, 420, 400, 1);
+        g.font = '600 16px "Inter", sans-serif'; g.fillStyle = '#aaa';
+        g.fillText('REWARD', 150, 280);
+        g.font = '700 32px "Outfit", sans-serif'; g.fillStyle = '#34d399';
+        g.fillText(passInfo.reward, 150, 325);
 
-        // Footer
+        g.font = '600 16px "Inter", sans-serif'; g.fillStyle = '#aaa';
+        g.fillText('FEE', 450, 280);
+        g.font = '700 32px "Outfit", sans-serif'; g.fillStyle = '#fff';
+        g.fillText('₹' + passInfo.fee, 450, 325);
+
+        // Footer codes
+        g.font = '500 14px "Space Grotesk", sans-serif'; g.fillStyle = '#555';
         g.textAlign = 'center';
-        g.fillStyle = 'rgba(255,255,255,.3)'; g.font = '400 11px "Outfit", sans-serif';
-        g.fillText('Show this pass during registration to claim your reward', 400, 460);
+        g.fillText(`ID: ${passInfo.id}  •  VERIFICATION: ${passInfo.code}  •  ${passInfo.time}`, 400, 460);
 
         // Download
         const link = document.createElement('a');
-        link.download = `Arena_Reward_Pass_${passInfo.name.replace(/\s+/g, '_')}.png`;
+        link.download = `ArenaPass_${passInfo.name.replace(/\s+/g, '_')}.png`;
         link.href = c.toDataURL('image/png');
         link.click();
     }
 
-    // ── Start ──────────────────────────────────────────
-    document.addEventListener('DOMContentLoaded', init);
+    // ── Security & Anti-Tamper ──────────────────────────
+    function setupSecurity() {
+        // 1. Disable Right Click
+        document.addEventListener('contextmenu', e => e.preventDefault());
+
+        // 2. Disable Keyboard Shortcuts (F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U)
+        document.addEventListener('keydown', e => {
+            if (
+                e.key === 'F12' ||
+                (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J')) ||
+                (e.ctrlKey && e.key === 'U')
+            ) {
+                e.preventDefault();
+            }
+        });
+
+        // 3. Mutation Observer to prevent Reward Text Tampering
+        const observer = new MutationObserver((mutations) => {
+            if (!wonPrize) return;
+            mutations.forEach(mutation => {
+                const target = mutation.target;
+                if (target.id === 'resultReward' || target.id === 'passReward') {
+                    if (target.textContent !== wonPrize.reward) {
+                        target.textContent = wonPrize.reward; // Revert immediately
+                    }
+                }
+                if (target.id === 'resultTitle') {
+                    const expected = wonPrize.type === 'win' ? 'Congratulations!' : wonPrize.reward;
+                    if (target.textContent !== expected) {
+                        target.textContent = expected;
+                    }
+                }
+            });
+        });
+
+        const config = { childList: true, subtree: true, characterData: true };
+        const resRewardEl = document.getElementById('resultReward');
+        const passRewardEl = document.getElementById('passReward');
+        const resTitleEl = document.getElementById('resultTitle');
+
+        if (resRewardEl) observer.observe(resRewardEl, config);
+        if (passRewardEl) observer.observe(passRewardEl, config);
+        if (resTitleEl) observer.observe(resTitleEl, config);
+
+        // 4. Console Clearing & Debugger Loop (Annoy Script Kiddies)
+        setInterval(() => {
+            // console.clear(); // Keep console clean to hide logic
+            // debugger; // Pauses execution if dev tools are open
+        }, 2000);
+        // Commented out debugger for now to avoid accidental annoyance during dev, 
+        // enable `debugger` line for production.
+    }
+
+    // Start
+    init();
 })();
+
