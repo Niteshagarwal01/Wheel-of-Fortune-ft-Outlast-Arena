@@ -8,6 +8,7 @@ create table entries (
   type text,
   reward_id text,
   code text,
+  ip_address text,
   timestamp timestamptz default now()
 );
 

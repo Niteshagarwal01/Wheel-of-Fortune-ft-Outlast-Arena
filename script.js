@@ -304,6 +304,14 @@
     }
 
     // ── Form ────────────────────────────────────────────
+    let userIP = '0.0.0.0';
+
+    // Fetch IP on load
+    fetch('https://api.ipify.org?format=json')
+        .then(res => res.json())
+        .then(data => { userIP = data.ip; })
+        .catch(err => console.warn('IP Fetch Error:', err));
+
     function setupForm() {
         accessWheelBtn.addEventListener('click', () => formModal.classList.add('active'));
         formModalClose.addEventListener('click', () => formModal.classList.remove('active'));
@@ -311,19 +319,51 @@
             if (e.target === formModal) formModal.classList.remove('active');
         });
 
-        playerForm.addEventListener('submit', (e) => {
+        playerForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+            const idxButton = playerForm.querySelector('button[type="submit"]');
+            const originalText = idxButton.innerHTML;
+            idxButton.disabled = true;
+            idxButton.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Checking...';
+
             const name = $('#playerName').value.trim();
             const phone = $('#playerPhone').value.trim();
-            if (!name || !phone) return;
 
-            playerData = { name, phone };
+            if (!name || !phone) {
+                idxButton.disabled = false;
+                idxButton.innerHTML = originalText;
+                return;
+            }
+
+            // Check duplicates in Supabase
+            if (sbClient) {
+                const { count, error } = await sbClient
+                    .from('entries')
+                    .select('*', { count: 'exact', head: true })
+                    .or(`phone.eq.${phone},ip_address.eq.${userIP}`);
+
+                if (error) {
+                    console.error('Check Error:', error);
+                    // Fallback: Allow if error (don't block legitimate users if DB is down)
+                } else if (count > 0) {
+                    alert('You have already used your free spin from this device or phone number!');
+                    idxButton.disabled = false;
+                    idxButton.innerHTML = originalText;
+                    return;
+                }
+            }
+
+            // Proceed if no duplicates
+            playerData = { name, phone, ip: userIP };
             localStorage.setItem('oa2_player', JSON.stringify(playerData));
 
             formModal.classList.remove('active');
             wheelLocked.style.display = 'none';
             wheelActive.style.display = 'flex';
             drawWheel();
+
+            idxButton.disabled = false;
+            idxButton.innerHTML = originalText;
         });
     }
 
@@ -555,6 +595,7 @@
                     type: passInfo.type,
                     reward_id: passInfo.id,
                     code: passInfo.code,
+                    ip_address: passInfo.ip,
                     timestamp: new Date().toISOString()
                 }]).then(({ error }) => {
                     if (error) console.error('Supabase Error:', error);
@@ -646,6 +687,7 @@
         return {
             name: playerData.name,
             phone: playerData.phone,
+            ip: playerData.ip,
             reward: seg.reward,
             fee: seg.fee,
             discount: seg.discount,
