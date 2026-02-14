@@ -8,11 +8,11 @@
     const SEGMENTS = [
         { label: '5% OFF', color: '#d4841a', text: '#fff', type: 'win', discount: 5, fee: 95, reward: '5% Discount' },
         { label: 'BETTER LUCK NEXT TIME', color: '#151320', text: 'rgba(255,255,255,.25)', type: 'lose', discount: 0, fee: 100, reward: 'Better Luck Next Time' },
-        { label: 'EXTRA CHANCE', color: '#1a8a52', text: '#fff', type: 'win', discount: 0, fee: 100, reward: 'Extra Chance' },
-        { label: 'NO DISCOUNT', color: '#12111f', text: 'rgba(255,255,255,.2)', type: 'lose', discount: 0, fee: 100, reward: 'No Discount' },
         { label: '10% OFF', color: '#c04420', text: '#fff', type: 'win', discount: 10, fee: 90, reward: '10% Discount' },
-        { label: 'BETTER LUCK NEXT TIME', color: '#151320', text: 'rgba(255,255,255,.25)', type: 'lose', discount: 0, fee: 100, reward: 'Better Luck Next Time' },
-        { label: 'NO DISCOUNT', color: '#12111f', text: 'rgba(255,255,255,.2)', type: 'lose', discount: 0, fee: 100, reward: 'No Discount' },
+        { label: '5% OFF', color: '#d4841a', text: '#fff', type: 'win', discount: 5, fee: 95, reward: '5% Discount' },
+        { label: 'EXTRA CHANCE', color: '#1a8a52', text: '#fff', type: 'win', discount: 0, fee: 100, reward: 'Extra Chance' },
+        { label: '5% OFF', color: '#d4841a', text: '#fff', type: 'win', discount: 5, fee: 95, reward: '5% Discount' },
+        { label: '10% OFF', color: '#c04420', text: '#fff', type: 'win', discount: 10, fee: 90, reward: '10% Discount' },
         { label: 'BETTER LUCK NEXT TIME', color: '#151320', text: 'rgba(255,255,255,.25)', type: 'lose', discount: 0, fee: 100, reward: 'Better Luck Next Time' },
     ];
     const NUM = SEGMENTS.length;
@@ -445,21 +445,98 @@
         if (isSpinning || hasSpun) return;
         isSpinning = true; spinBtn.disabled = true;
 
-        const idx = pickPrize();
-        wonPrize = SEGMENTS[idx];
+        // WEIGHTED PROBABILITY LOGIC
+        // 5% (3 segments) -> High
+        // 10% (2 segments) -> High
+        // Better Luck (2 segments) -> Medium
+        // Extra Chance (1 segment) -> Very Low
 
-        const segMid = idx * ARC + ARC / 2;
-        const target = -Math.PI / 2 - segMid;
-        const fullSpins = 5 + Math.floor(Math.random() * 3);
-        const totalRot = fullSpins * 2 * Math.PI + (target - currentAngle) % (2 * Math.PI);
-        const duration = 5500 + Math.random() * 2000;
+        // Improved Weighted Selection:
+        // 1. Pick a type based on probability
+        const rand = Math.random() * 100;
+        let targetType = '';
+
+        if (rand < 30) targetType = '5% OFF';           // 0-30 (30%)
+        else if (rand < 50) targetType = '10% OFF';     // 30-50 (20%)
+        else if (rand < 99) targetType = 'BETTER LUCK'; // 50-99 (49%)
+        else targetType = 'EXTRA CHANCE';               // 99-100 (1%)
+
+        // 2. Find all indices matching this type
+        const matchingIndices = [];
+        SEGMENTS.forEach((seg, i) => {
+            if (targetType === 'BETTER LUCK' && seg.label.includes('BETTER LUCK')) matchingIndices.push(i);
+            else if (seg.label === targetType) matchingIndices.push(i);
+        });
+
+        // 3. Pick random index from matches
+        // Fallback to random if something goes wrong (shouldn't happen)
+        let winnerIndex;
+        if (matchingIndices.length > 0) {
+            winnerIndex = matchingIndices[Math.floor(Math.random() * matchingIndices.length)];
+        } else {
+            winnerIndex = Math.floor(Math.random() * NUM);
+        }
+
+        wonPrize = SEGMENTS[winnerIndex];
+
+        // Calculate stop angle
+        // Arc index is from 0 to NUM-1.
+        // Angle to stop at center of segment:
+        // We want pointer (at top, -PI/2) to point to center of segment.
+        // The segment 'i' is at angle [current + i*ARC, current + (i+1)*ARC]
+        // We need to rotate such that the center of segment 'i' ends up at -PI/2 (270 deg)
+
+        // Current Rotation + Delta = Final Rotation
+        // Final Rotation % 2PI = Target Position
+
+        const segmentCenter = (winnerIndex * ARC) + (ARC / 2);
+        // We want (currentAngle + delta) % 2PI to be such that segmentCenter is at -PI/2? 
+        // Actually simpler:
+        // Just add rotations.
+        // To land on index i, we need to rotate BACKWARDS by i*ARC relative to 0? 
+        // Let's stick to a robust formula.
+        // Target is to have the POINTER (top, 270deg/-90deg) align with the winner.
+
+        // If wheel generates at 0 deg, segment 0 is at [0, ARC]. Center at ARC/2.
+        // Pointer is at 3PI/2 (270deg).
+
+        // Let's use a simpler random spin amount + correction.
+
+        const spins = 5 + Math.random() * 5; // 5-10 full spins
+        const spinAngle = spins * 2 * Math.PI;
+
+        // Calculate offset to land on the winner
+        // If we are at 0, segment i center is at `i*ARC + ARC/2`.
+        // We want this angle to be at `3*Math.PI/2` (Top) after rotation.
+        // So FinalAngle = (3*Math.PI/2) - (i*ARC + ARC/2)
+        // But we need to add full spins.
+
+        let targetRotation = (3 * Math.PI / 2) - (winnerIndex * ARC) - (ARC / 2);
+
+        // Adjust to be positive and add spins
+        targetRotation = (targetRotation % (2 * Math.PI)) + spinAngle;
+
+        // Ensure we spin forward
+        if (targetRotation < currentAngle) {
+            targetRotation += 2 * Math.PI;
+        }
+        // Add randomness within the segment (avoid lines)
+        const safeZone = ARC * 0.8; // 80% of segment width
+        const randomOffset = (Math.random() - 0.5) * safeZone;
+        targetRotation += randomOffset;
+
+        // Animate
+        animateWheel(currentAngle, targetRotation, 4000);
+    }
+
+    // Helper function for animation (extracted from original spin logic)
+    function animateWheel(startAngle, endAngle, duration) {
         const t0 = performance.now();
-        const startAng = currentAngle;
 
         function tick(now) {
             const p = Math.min((now - t0) / duration, 1);
             const ease = 1 - Math.pow(1 - p, 3);
-            currentAngle = startAng + totalRot * ease;
+            currentAngle = startAngle + (endAngle - startAngle) * ease;
             drawWheel();
             if (p < 1) { requestAnimationFrame(tick); return; }
 
