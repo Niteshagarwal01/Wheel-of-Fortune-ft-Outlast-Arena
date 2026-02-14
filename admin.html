@@ -749,6 +749,19 @@
             });
 
             refresh();
+            // Reset Spin Logic
+            const resetBtn = document.getElementById('resetSpinBtn');
+            if (resetBtn) {
+                resetBtn.addEventListener('click', () => {
+                    if (confirm('Reset your local spin status? This allows you to spin again on this device.')) {
+                        localStorage.removeItem('oa2_spun');
+                        localStorage.removeItem('oa2_reward');
+                        localStorage.removeItem('oa2_pass');
+                        alert('Spin status reset! Go back to the wheel page and refresh.');
+                    }
+                });
+            }
+
         })();
     </script>
 </body>

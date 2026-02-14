@@ -490,43 +490,39 @@
         // Final Rotation % 2PI = Target Position
 
         const segmentCenter = (winnerIndex * ARC) + (ARC / 2);
-        // We want (currentAngle + delta) % 2PI to be such that segmentCenter is at -PI/2? 
-        // Actually simpler:
-        // Just add rotations.
-        // To land on index i, we need to rotate BACKWARDS by i*ARC relative to 0? 
-        // Let's stick to a robust formula.
-        // Target is to have the POINTER (top, 270deg/-90deg) align with the winner.
 
-        // If wheel generates at 0 deg, segment 0 is at [0, ARC]. Center at ARC/2.
-        // Pointer is at 3PI/2 (270deg).
+        // Target: We want segmentCenter + finalRotation = 3 * PI / 2 (270 deg)
+        // So finalRotation = (3PI/2 - segmentCenter) mod 2PI
+        // But we are at currentAngle. We want to find delta such that:
+        // (currentAngle + delta) % 2PI = targetPointer - segmentCenter
 
-        // Let's use a simpler random spin amount + correction.
+        let targetPointer = 3 * Math.PI / 2; // 270 degrees (Top)
+        let targetRotation = targetPointer - segmentCenter;
 
-        const spins = 5 + Math.random() * 5; // 5-10 full spins
-        const spinAngle = spins * 2 * Math.PI;
+        // Current normalized angle
+        let currentNorm = currentAngle % (2 * Math.PI);
+        if (currentNorm < 0) currentNorm += 2 * Math.PI;
 
-        // Calculate offset to land on the winner
-        // If we are at 0, segment i center is at `i*ARC + ARC/2`.
-        // We want this angle to be at `3*Math.PI/2` (Top) after rotation.
-        // So FinalAngle = (3*Math.PI/2) - (i*ARC + ARC/2)
-        // But we need to add full spins.
+        // Calculate delta needed
+        let delta = targetRotation - currentNorm;
 
-        let targetRotation = (3 * Math.PI / 2) - (winnerIndex * ARC) - (ARC / 2);
+        // Normalize delta to be positive (rotate forward)
+        // We want to force it to be positive to spin clockwise/forward
+        while (delta < 0) delta += 2 * Math.PI;
 
-        // Adjust to be positive and add spins
-        targetRotation = (targetRotation % (2 * Math.PI)) + spinAngle;
+        // Add random full spins (5 to 8)
+        const fullSpins = 5 + Math.floor(Math.random() * 4);
+        const spinAngle = fullSpins * 2 * Math.PI;
 
-        // Ensure we spin forward
-        if (targetRotation < currentAngle) {
-            targetRotation += 2 * Math.PI;
-        }
-        // Add randomness within the segment (avoid lines)
-        const safeZone = ARC * 0.8; // 80% of segment width
+        let finalTarget = currentAngle + delta + spinAngle;
+
+        // Add randomness within the segment (±35% of arc) to be safe
+        const safeZone = ARC * 0.7;
         const randomOffset = (Math.random() - 0.5) * safeZone;
-        targetRotation += randomOffset;
+        finalTarget += randomOffset;
 
         // Animate
-        animateWheel(currentAngle, targetRotation, 4000);
+        animateWheel(currentAngle, finalTarget, 5000 + Math.random() * 1000);
     }
 
     // Helper function for animation (extracted from original spin logic)
@@ -612,7 +608,7 @@
             ? '<i class="fa-solid fa-trophy"></i>'
             : '<i class="fa-solid fa-dice"></i>';
         resultIcon.style.color = isWin ? '#ffd166' : 'rgba(255,255,255,.3)';
-        resultTitle.textContent = isWin ? 'Congratulations!' : 'Better Luck Next Time';
+        resultTitle.textContent = isWin ? 'Congratulations!' : seg.reward;
         resultMessage.textContent = isWin
             ? 'You unlocked an Arena Advantage!'
             : 'No discount this time, but you\'re still in the game!';
