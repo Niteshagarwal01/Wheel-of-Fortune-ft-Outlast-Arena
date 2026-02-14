@@ -7,13 +7,13 @@
     // ── Segments ────────────────────────────────────────
     const SEGMENTS = [
         { label: '5% OFF', color: '#d4841a', text: '#fff', type: 'win', discount: 5, fee: 95, reward: '5% Discount' },
-        { label: 'BETTER LUCK', color: '#151320', text: 'rgba(255,255,255,.25)', type: 'lose', discount: 0, fee: 100, reward: 'Better Luck' },
+        { label: 'BETTER LUCK NEXT TIME', color: '#151320', text: 'rgba(255,255,255,.25)', type: 'lose', discount: 0, fee: 100, reward: 'Better Luck Next Time' },
         { label: 'EXTRA CHANCE', color: '#1a8a52', text: '#fff', type: 'win', discount: 0, fee: 100, reward: 'Extra Chance' },
         { label: 'NO DISCOUNT', color: '#12111f', text: 'rgba(255,255,255,.2)', type: 'lose', discount: 0, fee: 100, reward: 'No Discount' },
         { label: '10% OFF', color: '#c04420', text: '#fff', type: 'win', discount: 10, fee: 90, reward: '10% Discount' },
-        { label: 'BETTER LUCK', color: '#151320', text: 'rgba(255,255,255,.25)', type: 'lose', discount: 0, fee: 100, reward: 'Better Luck' },
+        { label: 'BETTER LUCK NEXT TIME', color: '#151320', text: 'rgba(255,255,255,.25)', type: 'lose', discount: 0, fee: 100, reward: 'Better Luck Next Time' },
         { label: 'NO DISCOUNT', color: '#12111f', text: 'rgba(255,255,255,.2)', type: 'lose', discount: 0, fee: 100, reward: 'No Discount' },
-        { label: 'BETTER LUCK', color: '#151320', text: 'rgba(255,255,255,.25)', type: 'lose', discount: 0, fee: 100, reward: 'Better Luck' },
+        { label: 'BETTER LUCK NEXT TIME', color: '#151320', text: 'rgba(255,255,255,.25)', type: 'lose', discount: 0, fee: 100, reward: 'Better Luck Next Time' },
     ];
     const NUM = SEGMENTS.length;
     const ARC = (2 * Math.PI) / NUM;
@@ -379,8 +379,16 @@
             // Label
             ctx.save(); ctx.translate(cx, cy); ctx.rotate(sa + ARC / 2);
             ctx.textAlign = 'right'; ctx.fillStyle = seg.text;
-            ctx.font = '600 14px "Outfit", sans-serif';
-            ctx.fillText(seg.label, r - 24, 5); ctx.restore();
+
+            if (seg.label === 'BETTER LUCK NEXT TIME') {
+                ctx.font = '600 12px "Outfit", sans-serif';
+                ctx.fillText('BETTER LUCK', r - 24, -2);
+                ctx.fillText('NEXT TIME', r - 24, 14);
+            } else {
+                ctx.font = '600 14px "Outfit", sans-serif';
+                ctx.fillText(seg.label, r - 24, 5);
+            }
+            ctx.restore();
         }
 
         // Outer ring
