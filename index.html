@@ -19,26 +19,12 @@
 <body>
 
     <!-- ========== CURTAIN OVERLAY ========== -->
-    <div class="curtain-overlay" id="curtainOverlay">
-        <div class="curtain-left"></div>
-        <div class="curtain-right"></div>
-        <div class="curtain-cta" id="curtainCta">
-            <div class="curtain-glass">
-                <div class="curtain-logo">
-                    <img src="logo.png" alt="Outlast Arena 2.0" class="curtain-logo-img" />
-                </div>
-                <div class="curtain-divider"></div>
-                <div class="curtain-organized">
-                    <span>Organized by</span>
-                    <div class="curtain-tcc">
-                        <img src="tcclogo.png" alt="The Campus Chronicles" class="tcc-logo-small" />
-                        <span>The Campus Chronicles</span>
-                    </div>
-                    <span class="curtain-college">Media House of ADGIPS</span>
-                </div>
-                <div class="curtain-divider"></div>
-                <p><i class="fa-solid fa-hand-pointer"></i> Tap anywhere to enter</p>
-            </div>
+    <div id="starter">Press Enter</div>
+    <div id="scene">
+        <div id="curtain">
+            <div class="left"></div>
+            <div class="right"></div>
+            <div class="ground"></div>
         </div>
     </div>
 
@@ -48,13 +34,14 @@
         <!-- NAV -->
         <nav class="navbar" id="navbar">
             <div class="nav-brand">
-                <img src="logo.png" alt="Outlast Arena 2.0" class="nav-logo" />
+                <div class="nav-logo-mark"><i class="fa-solid fa-shield-halved"></i></div>
+                <div class="nav-logo-text">OUTLAST<span class="nav-logo-accent">ARENA</span><span
+                        class="nav-logo-ver">2.0</span></div>
             </div>
             <ul class="nav-links">
                 <li><a href="#wheel-section"><i class="fa-solid fa-dharmachakra"></i> Spin</a></li>
                 <li><a href="#about"><i class="fa-solid fa-info-circle"></i> About</a></li>
                 <li><a href="#details"><i class="fa-solid fa-clipboard-list"></i> Details</a></li>
-                <li><a href="admin.html"><i class="fa-solid fa-shield-halved"></i> Admin</a></li>
             </ul>
         </nav>
 
@@ -298,13 +285,10 @@
 
         <footer class="footer">
             <div class="footer-content">
-                <div class="footer-brand">
-                    <img src="logo.png" alt="Outlast Arena 2.0" class="footer-logo" />
-                </div>
                 <div class="footer-organized">
                     <span>Organized by</span>
                     <div class="footer-tcc">
-                        <img src="tcclogo.png" alt="TCC" class="tcc-logo-footer" />
+                        <img src="tcc.svg" alt="TCC" class="tcc-logo-footer" />
                         <div>
                             <strong>The Campus Chronicles</strong>
                             <span>Media House of ADGIPS</span>
@@ -317,8 +301,6 @@
                 </div>
             </div>
         </footer>
-    </div>
-    </footer>
     </div>
 
     <!-- ========== FORM MODAL ========== -->

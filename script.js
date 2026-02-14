@@ -20,7 +20,9 @@
 
     // ── DOM ─────────────────────────────────────────────
     const $ = (s) => document.querySelector(s);
-    const curtainOverlay = $('#curtainOverlay');
+    const scene = $('#scene');
+    const curtain = $('#curtain');
+    const starter = $('#starter');
     const mainWrapper = $('#mainWrapper');
     const accessWheelBtn = $('#accessWheelBtn');
     const formModal = $('#formModal');
@@ -51,6 +53,120 @@
     let wonPrize = null;
     let passInfo = JSON.parse(localStorage.getItem('oa2_pass') || 'null');
 
+    // ── Ambient Background Sound (Haunted Carnival / Calliope) ──
+    let ambientCtx = null;
+    function startAmbientSound() {
+        if (ambientCtx) return;
+        try {
+            ambientCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const masterGain = ambientCtx.createGain();
+            masterGain.gain.value = 0.15; // Moderate volume
+            masterGain.connect(ambientCtx.destination);
+
+            // Melody Sequencer (Simple Waltz in C Minor)
+            const bpm = 110;
+            const beatDur = 60 / bpm;
+            const notes = [
+                // Bar 1
+                { f: 261.63, t: 0, d: 0.5 },    // C4
+                { f: 311.13, t: 1, d: 0.25 },   // Eb4
+                { f: 392.00, t: 2, d: 0.25 },   // G4
+                // Bar 2
+                { f: 311.13, t: 3, d: 0.5 },    // Eb4
+                { f: 261.63, t: 4, d: 0.25 },   // C4
+                { f: 196.00, t: 5, d: 0.25 },   // G3
+                // Bar 3
+                { f: 207.65, t: 6, d: 0.5 },    // Ab3
+                { f: 261.63, t: 7, d: 0.25 },   // C4
+                { f: 311.13, t: 8, d: 0.25 },   // Eb4
+                // Bar 4
+                { f: 293.66, t: 9, d: 1.0 },    // D4
+
+                // Bar 5
+                { f: 261.63, t: 10, d: 0.5 },   // C4
+                { f: 311.13, t: 11, d: 0.25 },  // Eb4
+                { f: 392.00, t: 12, d: 0.25 },  // G4
+                // Bar 6
+                { f: 415.30, t: 13, d: 0.5 },   // Ab4
+                { f: 392.00, t: 14, d: 0.25 },  // G4
+                { f: 349.23, t: 15, d: 0.25 },  // F4
+                // Bar 7
+                { f: 311.13, t: 16, d: 0.5 },   // Eb4
+                { f: 293.66, t: 17, d: 0.25 },  // D4
+                { f: 246.94, t: 18, d: 0.25 },  // B3
+                // Bar 8
+                { f: 261.63, t: 19, d: 1.0 },   // C4
+            ];
+
+            const loopDuration = 20 * beatDur;
+
+            function playNote(freq, time, dur) {
+                const osc = ambientCtx.createOscillator();
+                const gain = ambientCtx.createGain();
+
+                // Calliope-style: Triangle/Sine blend with slight detune
+                osc.type = 'triangle';
+                osc.frequency.value = freq;
+
+                // Slight random detune for "old organ" feel
+                osc.detune.value = (Math.random() - 0.5) * 15;
+
+                // Organ envelope (quick attack, full sustain, quick release)
+                gain.gain.setValueAtTime(0, time);
+                gain.gain.linearRampToValueAtTime(0.2, time + 0.05);
+                gain.gain.setValueAtTime(0.2, time + dur - 0.05);
+                gain.gain.linearRampToValueAtTime(0, time + dur);
+
+                osc.connect(gain);
+                gain.connect(masterGain);
+
+                osc.start(time);
+                osc.stop(time + dur + 0.1);
+            }
+
+            function scheduleLoop() {
+                const now = ambientCtx.currentTime;
+                // Add a small lookahead buffer to keep loop smooth
+                notes.forEach(n => {
+                    playNote(n.f, now + n.t * beatDur, n.d * beatDur);
+                    // Add subtle harmony (lower octave) for richness
+                    playNote(n.f * 0.5, now + n.t * beatDur, n.d * beatDur);
+                });
+            }
+
+            scheduleLoop();
+            setInterval(scheduleLoop, loopDuration * 1000);
+
+            // Background "Fairground" Noise (Pink Noise + Low Pass)
+            const noise = ambientCtx.createBufferSource();
+            const bufferSize = 2 * ambientCtx.sampleRate;
+            const noiseBuffer = ambientCtx.createBuffer(1, bufferSize, ambientCtx.sampleRate);
+            const output = noiseBuffer.getChannelData(0);
+            let lastOut = 0; // Initialize lastOut for the pink noise generator
+            for (let i = 0; i < bufferSize; i++) {
+                const white = Math.random() * 2 - 1;
+                output[i] = (lastOut + (0.02 * white)) / 1.02;
+                lastOut = output[i];
+                output[i] *= 3.5;
+            }
+
+            noise.buffer = noiseBuffer;
+            noise.loop = true;
+
+            const noiseFilter = ambientCtx.createBiquadFilter();
+            noiseFilter.type = 'lowpass';
+            noiseFilter.frequency.value = 400; // Muffled distant crowd/wind
+            const noiseGain = ambientCtx.createGain();
+            noiseGain.gain.value = 0.05; // Very subtle
+
+            noise.connect(noiseFilter);
+            noiseFilter.connect(noiseGain);
+            noiseGain.connect(masterGain);
+            noise.start();
+
+        } catch (e) { /* Audio not supported */ }
+    }
+
     // ── Init ────────────────────────────────────────────
     function init() {
         setupCurtain();
@@ -63,17 +179,101 @@
     }
 
     // ── Curtain ─────────────────────────────────────────
+    function playCurtainSwoosh() {
+        try {
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const now = audioCtx.currentTime;
+            const duration = 1.5; // Synced with CSS animation
+            const sampleRate = audioCtx.sampleRate;
+
+            // Heavy fabric swoosh — noise with shaped envelope
+            const bufSize = sampleRate * duration;
+            const buffer = audioCtx.createBuffer(2, bufSize, sampleRate);
+            for (let ch = 0; ch < 2; ch++) {
+                const data = buffer.getChannelData(ch);
+                for (let i = 0; i < bufSize; i++) {
+                    const t = i / sampleRate;
+                    // Sharper attack for sync
+                    const hit = Math.exp(-t * 4.0) * Math.min(t * 20, 1);
+                    const tail = Math.exp(-t * 1.5) * 0.3;
+                    const env = hit + tail;
+                    data[i] = (Math.random() * 2 - 1) * env * 0.4; // Louder
+                }
+            }
+            const noise = audioCtx.createBufferSource();
+            noise.buffer = buffer;
+
+            // Sweeping bandpass for fabric movement feel
+            const bpf = audioCtx.createBiquadFilter();
+            bpf.type = 'bandpass';
+            bpf.frequency.setValueAtTime(800, now);
+            bpf.frequency.exponentialRampToValueAtTime(100, now + duration);
+            bpf.Q.value = 0.6;
+
+            // Low rumble layer
+            const rumble = audioCtx.createOscillator();
+            rumble.type = 'sine';
+            rumble.frequency.setValueAtTime(60, now);
+            rumble.frequency.exponentialRampToValueAtTime(30, now + duration);
+            const rumbleGain = audioCtx.createGain();
+            rumbleGain.gain.setValueAtTime(0.3, now);
+            rumbleGain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+            const masterGain = audioCtx.createGain();
+            masterGain.gain.setValueAtTime(0.8, now);
+            masterGain.gain.exponentialRampToValueAtTime(0.01, now + duration);
+
+            noise.connect(bpf);
+            bpf.connect(masterGain);
+            rumble.connect(rumbleGain);
+            rumbleGain.connect(masterGain);
+            masterGain.connect(audioCtx.destination);
+
+            noise.start();
+            rumble.start();
+            rumble.stop(now + duration);
+            noise.onended = () => audioCtx.close();
+        } catch (e) { /* silently ignore */ }
+    }
+
+    let curtainOpened = false;
+    function openCurtain() {
+        if (curtainOpened) return;
+        curtainOpened = true;
+
+        playCurtainSwoosh();
+        window.scrollTo(0, 0); // Ensure we start at top
+
+        // Animate curtain open
+        curtain.className = 'open';
+        // scene.className = 'expand'; // Removed to prevent "second app" feel
+        starter.className = 'fade-out';
+
+        setTimeout(() => { starter.style.display = 'none'; }, 500);
+
+        // Fade in main content immediately
+        setTimeout(() => {
+            mainWrapper.style.opacity = '1';
+            startAmbientSound();
+        }, 300);
+
+        // Remove scene overlay after animation
+        setTimeout(() => { scene.style.display = 'none'; }, 1600);
+    }
+
     function setupCurtain() {
-        // Always show curtain on page load
+        window.scrollTo(0, 0); // Reset scroll on load
         mainWrapper.style.opacity = '0';
-        mainWrapper.style.transition = 'opacity .8s ease';
-        curtainOverlay.addEventListener('click', () => {
-            curtainOverlay.classList.add('open');
-            setTimeout(() => {
-                mainWrapper.style.opacity = '1';
-            }, 400);
-            setTimeout(() => { curtainOverlay.style.display = 'none'; }, 1600);
+        mainWrapper.style.transition = 'opacity 1s ease';
+
+        // Enter key trigger
+        document.addEventListener('keydown', (e) => {
+            if (e.keyCode === 13) openCurtain();
         });
+
+        // Click trigger
+        scene.addEventListener('click', openCurtain);
+        starter.addEventListener('click', openCurtain);
     }
 
     // ── Navbar ──────────────────────────────────────────
