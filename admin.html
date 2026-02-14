@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard — Outlast Arena 2.0</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Open+Sans:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <style>
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --navy: #0c0a2a;
+            --navy2: #150f3d;
+            --coral: #e8571e;
+            --orange: #f4811e;
+            --amber: #f7a21d;
+            --white: #fff;
+            --dimwhite: rgba(255, 255, 255, .55);
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background: linear-gradient(135deg, #0c0a2a, #150f3d, #1e1250);
+            color: var(--white);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* ── Top Bar ── */
+        .admin-topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 32px;
+            background: rgba(0, 0, 0, .3);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, .06);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .admin-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .admin-brand i {
+            font-size: 1.4rem;
+            color: var(--orange);
+        }
+
+        .admin-brand h1 {
+            font-family: 'Anton', sans-serif;
+            font-size: 1.4rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .admin-brand span {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: .85rem;
+            letter-spacing: 2px;
+            color: var(--dimwhite);
+            margin-left: 8px;
+        }
+
+        .admin-back {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1rem;
+            letter-spacing: 1.5px;
+            color: var(--dimwhite);
+            text-decoration: none;
+            padding: 8px 20px;
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, .1);
+            transition: all .3s;
+        }
+
+        .admin-back:hover {
+            color: var(--orange);
+            border-color: var(--orange);
+        }
+
+        /* ── Main Container ── */
+        .admin-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px 24px;
+        }
+
+        /* ── Stats Row ── */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, .05);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, .08);
+            border-radius: 16px;
+            padding: 24px 20px;
+            text-align: center;
+            transition: all .3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            background: rgba(255, 255, 255, .08);
+            border-color: rgba(232, 87, 30, .2);
+        }
+
+        .stat-icon {
+            font-size: 1.8rem;
+            color: var(--orange);
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-family: 'Anton', sans-serif;
+            font-size: 2.2rem;
+            color: var(--white);
+            line-height: 1.2;
+        }
+
+        .stat-label {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: .85rem;
+            letter-spacing: 2px;
+            color: var(--dimwhite);
+            margin-top: 4px;
+        }
+
+        /* ── Controls ── */
+        .controls-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, .06);
+            border: 1px solid rgba(255, 255, 255, .1);
+            border-radius: 50px;
+            padding: 10px 20px;
+            flex: 1;
+            max-width: 420px;
+        }
+
+        .search-box i {
+            color: var(--dimwhite);
+        }
+
+        .search-box input {
+            background: none;
+            border: none;
+            outline: none;
+            color: var(--white);
+            font-family: 'Open Sans', sans-serif;
+            font-size: .95rem;
+            width: 100%;
+        }
+
+        .search-box input::placeholder {
+            color: rgba(255, 255, 255, .3);
+        }
+
+        .filter-btns {
+            display: flex;
+            gap: 8px;
+        }
+
+        .filter-btn {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: .88rem;
+            letter-spacing: 1.5px;
+            padding: 8px 20px;
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, .12);
+            background: rgba(255, 255, 255, .05);
+            color: var(--dimwhite);
+            cursor: pointer;
+            transition: all .3s;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: linear-gradient(135deg, var(--coral), var(--orange));
+            border-color: transparent;
+            color: #fff;
+        }
+
+        .action-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: .95rem;
+            letter-spacing: 1.5px;
+            padding: 10px 24px;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            transition: all .3s;
+        }
+
+        .btn-export {
+            background: linear-gradient(135deg, var(--coral), var(--orange));
+            color: #fff;
+        }
+
+        .btn-export:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(232, 87, 30, .3);
+        }
+
+        .btn-clear {
+            background: rgba(220, 50, 50, .15);
+            color: #f76c6c;
+            border: 1px solid rgba(220, 50, 50, .2);
+        }
+
+        .btn-clear:hover {
+            background: rgba(220, 50, 50, .3);
+        }
+
+        /* ── Table ── */
+        .table-container {
+            background: rgba(255, 255, 255, .04);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, .06);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead th {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: .88rem;
+            letter-spacing: 2px;
+            color: var(--amber);
+            text-align: left;
+            padding: 16px 18px;
+            background: rgba(0, 0, 0, .25);
+            border-bottom: 1px solid rgba(255, 255, 255, .06);
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid rgba(255, 255, 255, .04);
+            transition: background .2s;
+        }
+
+        tbody tr:hover {
+            background: rgba(255, 255, 255, .04);
+        }
+
+        tbody td {
+            padding: 14px 18px;
+            font-size: .9rem;
+            color: rgba(255, 255, 255, .8);
+            white-space: nowrap;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 14px;
+            border-radius: 50px;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: .78rem;
+            letter-spacing: 1.5px;
+        }
+
+        .badge-win {
+            background: rgba(39, 174, 96, .18);
+            color: #6ddf9a;
+            border: 1px solid rgba(39, 174, 96, .25);
+        }
+
+        .badge-lose {
+            background: rgba(220, 50, 50, .12);
+            color: #e87c7c;
+            border: 1px solid rgba(220, 50, 50, .2);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            color: var(--dimwhite);
+        }
+
+        .empty-state i {
+            font-size: 3.5rem;
+            color: rgba(255, 255, 255, .15);
+            margin-bottom: 16px;
+            display: block;
+        }
+
+        .empty-state h3 {
+            font-family: 'Anton', sans-serif;
+            font-size: 1.3rem;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+            color: rgba(255, 255, 255, .4);
+        }
+
+        .empty-state p {
+            font-size: .9rem;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 768px) {
+            .admin-topbar {
+                flex-direction: column;
+                gap: 12px;
+                padding: 16px;
+            }
+
+            .controls-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-box {
+                max-width: 100%;
+            }
+
+            .filter-btns {
+                justify-content: center;
+            }
+
+            .table-container {
+                overflow-x: auto;
+            }
+
+            .stats-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Top Bar -->
+    <div class="admin-topbar">
+        <div class="admin-brand">
+            <i class="fa-solid fa-shield-halved"></i>
+            <h1>Admin Dashboard</h1>
+            <span>Outlast Arena 2.0</span>
+        </div>
+        <a href="index.html" class="admin-back">
+            <i class="fa-solid fa-arrow-left"></i> Back to Site
+        </a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="admin-container">
+
+        <!-- Stats -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
+                <div class="stat-value" id="totalEntries">0</div>
+                <div class="stat-label">Total Entries</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fa-solid fa-trophy"></i></div>
+                <div class="stat-value" id="totalWins">0</div>
+                <div class="stat-label">Winners</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fa-solid fa-percent"></i></div>
+                <div class="stat-value" id="totalDiscounts">0</div>
+                <div class="stat-label">Discounts Given</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fa-solid fa-indian-rupee-sign"></i></div>
+                <div class="stat-value" id="totalRevenue">₹0</div>
+                <div class="stat-label">Expected Revenue</div>
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls-row">
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="searchInput" placeholder="Search by name or phone..." />
+            </div>
+            <div class="filter-btns">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="win">Winners</button>
+                <button class="filter-btn" data-filter="lose">No Discount</button>
+            </div>
+            <div style="display: flex; gap: 8px;">
+                <button class="action-btn btn-export" id="exportBtn">
+                    <i class="fa-solid fa-download"></i> Export CSV
+                </button>
+                <button class="action-btn btn-clear" id="clearBtn">
+                    <i class="fa-solid fa-trash"></i> Clear All
+                </button>
+            </div>
+        </div>
+
+        <!-- Table -->
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Phone</th>
+                        <th>Reward</th>
+                        <th>Fee</th>
+                        <th>Type</th>
+                        <th>Reward ID</th>
+                        <th>Time</th>
+                    </tr>
+                </thead>
+                <tbody id="entriesBody">
+                </tbody>
+            </table>
+            <div class="empty-state" id="emptyState" style="display:none;">
+                <i class="fa-solid fa-inbox"></i>
+                <h3>No Entries Yet</h3>
+                <p>Player entries will appear here once they spin the wheel.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (() => {
+            'use strict';
+
+            const KEY_PREFIX = 'oa2_entries';
+            const tbody = document.getElementById('entriesBody');
+            const emptyState = document.getElementById('emptyState');
+            const searchInput = document.getElementById('searchInput');
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            const exportBtn = document.getElementById('exportBtn');
+            const clearBtn = document.getElementById('clearBtn');
+
+            let currentFilter = 'all';
+
+            // Load all entries from localStorage
+            function getAllEntries() {
+                const entries = [];
+                // Check the single-player entry
+                const player = JSON.parse(localStorage.getItem('oa2_player') || 'null');
+                const pass = JSON.parse(localStorage.getItem('oa2_pass') || 'null');
+                if (player && pass) {
+                    entries.push({ ...player, ...pass });
+                }
+
+                // Check bulk entries array (for admin tracking)
+                const bulk = JSON.parse(localStorage.getItem(KEY_PREFIX) || '[]');
+                bulk.forEach(entry => {
+                    // Avoid duplicates
+                    if (!entries.find(e => e.id === entry.id)) {
+                        entries.push(entry);
+                    }
+                });
+
+                return entries;
+            }
+
+            function updateStats(entries) {
+                document.getElementById('totalEntries').textContent = entries.length;
+                const wins = entries.filter(e => e.type === 'win').length;
+                document.getElementById('totalWins').textContent = wins;
+                const discounts = entries.filter(e => e.discount && e.discount > 0).length;
+                document.getElementById('totalDiscounts').textContent = discounts;
+
+                const revenue = entries.reduce((sum, e) => sum + (e.fee || 100), 0);
+                document.getElementById('totalRevenue').textContent = '₹' + revenue;
+            }
+
+            function renderEntries(entries) {
+                // Apply search filter
+                const search = searchInput.value.toLowerCase().trim();
+                let filtered = entries;
+
+                if (search) {
+                    filtered = filtered.filter(e =>
+                        (e.name || '').toLowerCase().includes(search) ||
+                        (e.phone || '').includes(search)
+                    );
+                }
+
+                // Apply type filter
+                if (currentFilter !== 'all') {
+                    filtered = filtered.filter(e => e.type === currentFilter);
+                }
+
+                tbody.innerHTML = '';
+
+                if (filtered.length === 0) {
+                    emptyState.style.display = 'block';
+                    return;
+                }
+                emptyState.style.display = 'none';
+
+                filtered.forEach((entry, i) => {
+                    const tr = document.createElement('tr');
+                    const isWin = entry.type === 'win';
+                    tr.innerHTML = `
+                        <td>${i + 1}</td>
+                        <td><strong>${entry.name || '—'}</strong></td>
+                        <td>${entry.phone || '—'}</td>
+                        <td>${entry.reward || '—'}</td>
+                        <td>₹${entry.fee || 100}</td>
+                        <td><span class="badge ${isWin ? 'badge-win' : 'badge-lose'}">${isWin ? 'WIN' : 'NO WIN'}</span></td>
+                        <td style="font-size:.78rem;opacity:.6">${entry.id || '—'}</td>
+                        <td style="font-size:.78rem;opacity:.6">${entry.time || '—'}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+
+            function refresh() {
+                const entries = getAllEntries();
+                updateStats(entries);
+                renderEntries(entries);
+            }
+
+            // Search
+            searchInput.addEventListener('input', refresh);
+
+            // Filter buttons
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentFilter = btn.dataset.filter;
+                    refresh();
+                });
+            });
+
+            // Export CSV
+            exportBtn.addEventListener('click', () => {
+                const entries = getAllEntries();
+                if (entries.length === 0) return alert('No entries to export.');
+
+                const headers = ['Name', 'Phone', 'Reward', 'Fee', 'Type', 'Discount', 'Reward ID', 'Verification', 'Time'];
+                const rows = entries.map(e => [
+                    e.name || '', e.phone || '', e.reward || '', e.fee || 100,
+                    e.type || '', e.discount || 0, e.id || '', e.code || '', e.time || ''
+                ]);
+
+                let csv = headers.join(',') + '\n';
+                rows.forEach(r => {
+                    csv += r.map(v => `"${v}"`).join(',') + '\n';
+                });
+
+                const blob = new Blob([csv], { type: 'text/csv' });
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = `outlast_arena_entries_${new Date().toISOString().slice(0, 10)}.csv`;
+                a.click();
+            });
+
+            // Clear all entries
+            clearBtn.addEventListener('click', () => {
+                if (!confirm('Are you sure? This will clear ALL saved entries from this browser.')) return;
+                localStorage.removeItem('oa2_player');
+                localStorage.removeItem('oa2_pass');
+                localStorage.removeItem('oa2_spun');
+                localStorage.removeItem(KEY_PREFIX);
+                refresh();
+            });
+
+            // Initial render
+            refresh();
+        })();
+    </script>
+</body>
+
+</html>

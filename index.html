@@ -6,11 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Wheel of Fortune ft Outlast Arena 2.0 | Utkarsh 2026</title>
     <meta name="description"
-        content="Spin the Arena Wheel to unlock discounts and extra lives for Outlast Arena 2.0, a nostalgic childhood games challenge at Utkarsh 2026." />
+        content="Spin the Arena Wheel to unlock discounts and extra lives for Outlast Arena 2.0 at Utkarsh 2026." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-        href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Open+Sans:wght@300;400;500;600;700;800&family=Dancing+Script:wght@400;500;600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
         rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <link rel="stylesheet" href="style.css" />
@@ -20,62 +20,143 @@
 
     <!-- ========== CURTAIN OVERLAY ========== -->
     <div class="curtain-overlay" id="curtainOverlay">
-        <div class="curtain-valance"></div>
         <div class="curtain-left"></div>
         <div class="curtain-right"></div>
         <div class="curtain-cta" id="curtainCta">
-            <div class="curtain-icon">
-                <i class="fa-solid fa-masks-theater"></i>
+            <div class="curtain-glass">
+                <div class="curtain-icon">
+                    <i class="fa-solid fa-masks-theater"></i>
+                </div>
+                <h2>Welcome to<br><span class="curtain-accent">The Arena</span></h2>
+                <div class="curtain-divider"></div>
+                <p><i class="fa-solid fa-hand-pointer"></i> Tap anywhere to enter</p>
             </div>
-            <h2>Welcome to the Arena</h2>
-            <p><i class="fa-solid fa-hand-pointer"></i> Click anywhere to enter</p>
         </div>
     </div>
 
-    <!-- ========== MAIN CONTENT (hidden behind curtain) ========== -->
+    <!-- ========== MAIN CONTENT ========== -->
     <div class="main-wrapper" id="mainWrapper">
 
         <!-- NAV -->
         <nav class="navbar" id="navbar">
             <div class="nav-brand">
                 <i class="fa-solid fa-dharmachakra brand-icon"></i>
-                <span class="brand-text">Outlast Arena</span>
+                <span>Outlast Arena</span>
             </div>
             <ul class="nav-links">
-                <li><a href="#hero"><i class="fa-solid fa-house"></i> Home</a></li>
-                <li><a href="#about"><i class="fa-solid fa-info-circle"></i> About</a></li>
                 <li><a href="#wheel-section"><i class="fa-solid fa-dharmachakra"></i> Spin</a></li>
+                <li><a href="#about"><i class="fa-solid fa-info-circle"></i> About</a></li>
                 <li><a href="#details"><i class="fa-solid fa-clipboard-list"></i> Details</a></li>
+                <li><a href="admin.html"><i class="fa-solid fa-shield-halved"></i> Admin</a></li>
             </ul>
         </nav>
 
-        <!-- ========== HERO ========== -->
-        <section class="hero" id="hero">
-            <div class="hero-bg-effects">
-                <div class="hero-orb orb-1"></div>
-                <div class="hero-orb orb-2"></div>
-                <div class="hero-orb orb-3"></div>
+        <!-- ========== WHEEL SECTION (FIRST — hero replacement) ========== -->
+        <section class="wheel-hero" id="wheel-section">
+            <div class="wheel-hero-bg">
+                <div class="floating-particle p1"></div>
+                <div class="floating-particle p2"></div>
+                <div class="floating-particle p3"></div>
+                <div class="floating-particle p4"></div>
             </div>
-            <div class="hero-content reveal">
-                <div class="hero-badge">
-                    <i class="fa-solid fa-sparkles"></i> Utkarsh 2026 Presents
+            <div class="wheel-hero-content">
+                <div class="wheel-hero-left reveal">
+                    <span class="event-badge">
+                        <i class="fa-solid fa-sparkles"></i> Utkarsh 2026
+                    </span>
+                    <h1 class="wheel-hero-title">
+                        <span class="wht-line1">Wheel of</span>
+                        <span class="wht-line2">Fortune</span>
+                        <span class="wht-ft">ft</span>
+                        <span class="wht-line3">Outlast Arena 2.0</span>
+                    </h1>
+                    <p class="wheel-hero-tagline">Spin. Win. Survive the Arena.</p>
+                    <p class="wheel-hero-desc">Unlock exclusive discounts and power‑ups before you enter the ultimate
+                        nostalgic battle royale.</p>
+                    <div class="extra-chance-info">
+                        <i class="fa-solid fa-heart-pulse"></i>
+                        <span><strong>Extra Chance</strong> = One more life to re‑enter the game after
+                            elimination</span>
+                    </div>
                 </div>
-                <h1 class="hero-title">
-                    <span class="title-line title-glow">Wheel of Fortune</span>
-                    <span class="title-ft">ft</span>
-                    <span class="title-line title-accent">Outlast Arena 2.0</span>
-                </h1>
-                <p class="hero-tagline">Spin. Win. Survive the Arena.</p>
-                <p class="hero-desc">Unlock exclusive discounts and power-ups before you enter the ultimate nostalgic
-                    battle royale.</p>
-                <div class="hero-actions">
-                    <a href="#about" class="btn btn-gold">
-                        <i class="fa-solid fa-arrow-down"></i> Enter the Arena
-                    </a>
+                <div class="wheel-hero-right reveal">
+                    <!-- Locked state -->
+                    <div class="wheel-locked" id="wheelLocked">
+                        <div class="wheel-preview-ring">
+                            <div class="wheel-lock-icon"><i class="fa-solid fa-lock"></i></div>
+                        </div>
+                        <button class="btn btn-primary btn-lg" id="accessWheelBtn">
+                            <i class="fa-solid fa-lock-open"></i> Unlock Your Spin
+                        </button>
+                        <p class="wheel-lock-note">Enter your details to spin</p>
+                    </div>
+                    <!-- Active state -->
+                    <div class="wheel-active" id="wheelActive" style="display:none;">
+                        <div class="wheel-wrapper">
+                            <div class="wheel-pointer"><i class="fa-solid fa-caret-down"></i></div>
+                            <canvas id="wheelCanvas" width="460" height="460"></canvas>
+                        </div>
+                        <div class="wheel-controls">
+                            <button class="btn btn-spin" id="spinBtn">
+                                <i class="fa-solid fa-rotate"></i> SPIN NOW
+                            </button>
+                            <p class="spin-note" id="spinNote">You get <strong>1 free spin</strong>. Make it count!</p>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="scroll-indicator">
                 <i class="fa-solid fa-chevron-down"></i>
+            </div>
+        </section>
+
+        <!-- ========== REWARD SECTION (appears after spin) ========== -->
+        <section class="reward-section" id="rewardSection" style="display:none;">
+            <div class="section-header">
+                <span class="section-tag"><i class="fa-solid fa-ticket"></i> Your Reward</span>
+                <h2 class="section-title">Arena <span class="highlight">Reward Pass</span></h2>
+            </div>
+            <div class="reward-pass-card" id="rewardPassCard">
+                <div class="pass-header">
+                    <div class="pass-badge">UTKARSH 2026</div>
+                    <h3 class="pass-title">ARENA REWARD PASS</h3>
+                    <p class="pass-subtitle">Wheel of Fortune ft Outlast Arena 2.0</p>
+                </div>
+                <div class="pass-divider"></div>
+                <div class="pass-details">
+                    <div class="pass-row">
+                        <span class="pass-label"><i class="fa-solid fa-user"></i> Player</span>
+                        <span class="pass-value" id="passName">---</span>
+                    </div>
+                    <div class="pass-row">
+                        <span class="pass-label"><i class="fa-solid fa-phone"></i> Phone</span>
+                        <span class="pass-value" id="passPhone">---</span>
+                    </div>
+                    <div class="pass-row">
+                        <span class="pass-label"><i class="fa-solid fa-star"></i> Reward</span>
+                        <span class="pass-value pass-reward-value" id="passReward">---</span>
+                    </div>
+                    <div class="pass-row">
+                        <span class="pass-label"><i class="fa-solid fa-indian-rupee-sign"></i> Entry Fee</span>
+                        <span class="pass-value pass-fee-value" id="passFee">---</span>
+                    </div>
+                </div>
+                <div class="pass-divider"></div>
+                <div class="pass-codes">
+                    <span id="passId"></span>
+                    <span id="passCode"></span>
+                    <span id="passTime"></span>
+                </div>
+                <p class="pass-footnote">Show this pass during registration to claim your reward</p>
+            </div>
+            <div class="reward-actions">
+                <button class="btn btn-primary btn-lg" id="downloadPassBtn">
+                    <i class="fa-solid fa-download"></i> Download Reward Pass
+                </button>
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLSfqTqEiFldEXsPT1jOLhswdvP9lzzFgvyzjhc1cTGeFIZ6mSQ/viewform"
+                    class="btn btn-outline btn-lg" id="registerBtn" target="_blank" rel="noopener">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i> Register Now
+                </a>
             </div>
         </section>
 
@@ -84,13 +165,12 @@
             <div class="section-header reveal">
                 <span class="section-tag"><i class="fa-solid fa-gamepad"></i> The Arena Awaits</span>
                 <h2 class="section-title">Childhood Games Are <span class="highlight">Back!</span></h2>
-                <p class="section-subtitle">Welcome to <strong>Outlast Arena 2.0</strong> &mdash; organized under
-                    <em>Utkarsh 2026</em>
-                </p>
+                <p class="section-subtitle">Welcome to <strong>Outlast Arena 2.0</strong> — organized under <em>Utkarsh
+                        2026</em></p>
             </div>
             <div class="about-desc reveal">
                 <p>A nostalgic, high-energy fun challenge event inspired by the childhood games we all grew up playing
-                    &mdash; but with a competitive twist. Participants compete in fast-paced, skill-based mini
+                    — but with a competitive twist. Participants compete in fast-paced, skill-based mini
                     challenges. Each round presents a new task, and players must survive within a fixed time limit to
                     advance.</p>
             </div>
@@ -180,121 +260,31 @@
             </div>
         </section>
 
-        <!-- ========== WHEEL SECTION ========== -->
-        <section class="wheel-section" id="wheel-section">
+        <!-- ========== HOW TO REGISTER ========== -->
+        <section class="register-steps" id="register">
             <div class="section-header reveal">
-                <span class="section-tag"><i class="fa-solid fa-dharmachakra"></i> Arena Advantage</span>
-                <h2 class="section-title">Spin the <span class="highlight">Arena Wheel</span></h2>
-                <p class="section-desc">Try your luck! Win discounts on registration or an Extra Chance during gameplay.
-                </p>
+                <span class="section-tag"><i class="fa-solid fa-list-check"></i> How To</span>
+                <h2 class="section-title">Claim Your <span class="highlight">Reward</span></h2>
             </div>
-
-            <div class="wheel-area reveal">
-                <!-- Wheel locked state (before form) -->
-                <div class="wheel-locked" id="wheelLocked">
-                    <div class="wheel-preview-ring">
-                        <div class="wheel-lock-icon"><i class="fa-solid fa-lock"></i></div>
-                    </div>
-                    <button class="btn btn-gold btn-lg" id="accessWheelBtn">
-                        <i class="fa-solid fa-lock-open"></i> Unlock Your Spin
-                    </button>
-                    <p class="wheel-lock-note">Enter your details to unlock the wheel</p>
+            <div class="steps-flow reveal">
+                <div class="step-item">
+                    <div class="step-num">1</div>
+                    <p>Download your Reward Pass</p>
                 </div>
-
-                <!-- Wheel active state (after form) -->
-                <div class="wheel-active" id="wheelActive" style="display:none;">
-                    <div class="wheel-wrapper">
-                        <div class="wheel-pointer"><i class="fa-solid fa-caret-down"></i></div>
-                        <canvas id="wheelCanvas" width="420" height="420"></canvas>
-                    </div>
-                    <div class="wheel-controls">
-                        <button class="btn btn-spin" id="spinBtn">
-                            <i class="fa-solid fa-rotate"></i> SPIN NOW
-                        </button>
-                        <p class="spin-note" id="spinNote">You get <strong>1 free spin</strong>. Make it count!</p>
-                    </div>
+                <div class="step-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                <div class="step-item">
+                    <div class="step-num">2</div>
+                    <p>Open the registration form</p>
                 </div>
-            </div>
-        </section>
-
-        <!-- ========== REWARD SECTION (appears after spin) ========== -->
-        <section class="reward-section" id="rewardSection" style="display:none;">
-            <div class="section-header">
-                <span class="section-tag"><i class="fa-solid fa-ticket"></i> Your Reward</span>
-                <h2 class="section-title">Arena <span class="highlight">Reward Pass</span></h2>
-            </div>
-            <div class="reward-pass-card" id="rewardPassCard">
-                <div class="pass-header">
-                    <div class="pass-badge">UTKARSH 2026</div>
-                    <h3 class="pass-title">ARENA REWARD PASS</h3>
-                    <p class="pass-subtitle">Wheel of Fortune ft Outlast Arena 2.0</p>
+                <div class="step-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                <div class="step-item">
+                    <div class="step-num">3</div>
+                    <p>Upload pass &amp; enter Reward ID</p>
                 </div>
-                <div class="pass-divider"></div>
-                <div class="pass-details">
-                    <div class="pass-row">
-                        <span class="pass-label"><i class="fa-solid fa-user"></i> Player</span>
-                        <span class="pass-value" id="passName">---</span>
-                    </div>
-                    <div class="pass-row">
-                        <span class="pass-label"><i class="fa-solid fa-phone"></i> Phone</span>
-                        <span class="pass-value" id="passPhone">---</span>
-                    </div>
-                    <div class="pass-row">
-                        <span class="pass-label"><i class="fa-solid fa-star"></i> Reward</span>
-                        <span class="pass-value pass-reward-value" id="passReward">---</span>
-                    </div>
-                    <div class="pass-row">
-                        <span class="pass-label"><i class="fa-solid fa-indian-rupee-sign"></i> Entry Fee</span>
-                        <span class="pass-value pass-fee-value" id="passFee">---</span>
-                    </div>
-                </div>
-                <div class="pass-divider"></div>
-                <div class="pass-codes">
-                    <div class="pass-code-item">
-                        <span class="pass-code-label">Reward ID</span>
-                        <span class="pass-code-value" id="passId">---</span>
-                    </div>
-                    <div class="pass-code-item">
-                        <span class="pass-code-label">Verification Code</span>
-                        <span class="pass-code-value" id="passVerify">---</span>
-                    </div>
-                    <div class="pass-code-item">
-                        <span class="pass-code-label">Spin Time</span>
-                        <span class="pass-code-value" id="passTime">---</span>
-                    </div>
-                </div>
-            </div>
-            <div class="reward-actions">
-                <button class="btn btn-gold btn-lg" id="downloadPassBtn">
-                    <i class="fa-solid fa-download"></i> Download Reward Pass
-                </button>
-                <a href="https://docs.google.com/forms/d/e/1FAIpQLSfqTqEiFldEXsPT1jOLhswdvP9lzzFgvyzjhc1cTGeFIZ6mSQ/viewform"
-                    class="btn btn-outline btn-lg" id="registerBtn" target="_blank" rel="noopener">
-                    <i class="fa-solid fa-arrow-up-right-from-square"></i> Register for Outlast Arena 2.0
-                </a>
-            </div>
-            <div class="reward-instructions">
-                <h4><i class="fa-solid fa-circle-info"></i> How to Claim</h4>
-                <div class="steps-row">
-                    <div class="step-item">
-                        <div class="step-num">1</div>
-                        <p>Download your Reward Pass</p>
-                    </div>
-                    <div class="step-arrow"><i class="fa-solid fa-arrow-right"></i></div>
-                    <div class="step-item">
-                        <div class="step-num">2</div>
-                        <p>Open the registration form</p>
-                    </div>
-                    <div class="step-arrow"><i class="fa-solid fa-arrow-right"></i></div>
-                    <div class="step-item">
-                        <div class="step-num">3</div>
-                        <p>Upload pass &amp; enter Reward ID</p>
-                    </div>
-                    <div class="step-arrow"><i class="fa-solid fa-arrow-right"></i></div>
-                    <div class="step-item">
-                        <div class="step-num">4</div>
-                        <p>Complete registration</p>
-                    </div>
+                <div class="step-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                <div class="step-item">
+                    <div class="step-num">4</div>
+                    <p>Complete registration</p>
                 </div>
             </div>
         </section>
@@ -306,7 +296,7 @@
                     <i class="fa-solid fa-dharmachakra"></i>
                     <span>Wheel of Fortune ft Outlast Arena 2.0</span>
                 </div>
-                <p class="footer-sub">Part of <strong>Utkarsh 2026</strong> &mdash; Annual Technical-Cultural Fest</p>
+                <p class="footer-sub">Part of <strong>Utkarsh 2026</strong> — Annual Technical-Cultural Fest</p>
                 <p class="footer-copy">Season 2</p>
             </div>
         </footer>
@@ -332,7 +322,7 @@
                     <input type="tel" id="playerPhone" name="playerPhone" placeholder="Enter 10-digit phone number"
                         required pattern="[0-9]{10}" maxlength="10" />
                 </div>
-                <button type="submit" class="btn btn-gold btn-lg btn-full">
+                <button type="submit" class="btn btn-primary btn-lg btn-full">
                     <i class="fa-solid fa-lock-open"></i> Unlock My Spin
                 </button>
             </form>
@@ -348,7 +338,7 @@
             <p class="result-message" id="resultMessage">You unlocked an Arena Advantage!</p>
             <div class="result-reward" id="resultReward">---</div>
             <div class="result-fee" id="resultFee"></div>
-            <button class="btn btn-gold btn-lg" id="resultCloseBtn">
+            <button class="btn btn-primary btn-lg" id="resultCloseBtn">
                 <i class="fa-solid fa-arrow-down"></i> View Your Reward Pass
             </button>
         </div>
